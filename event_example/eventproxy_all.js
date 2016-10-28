@@ -1,0 +1,2 @@
+
+Deferrd.prototype.all = function
