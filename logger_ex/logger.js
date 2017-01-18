@@ -1,16 +1,21 @@
-var winston = require('winston');
+var log4js=require ('log4js');
+var workers=[];
+var logger;
+var logFile='./logs/test.' + process.pid;
 
-var logger = new (winston.Logger)({
-  transports: [
-    new winston.transports.Console(),
-    new winston.transports.File({ filename: './all-logs.log', maxsize:1024, maxFiles:3 })
-  ],
-  //exceptionHandlers: [
-  //  new winston.transports.File({ filename: './exceptions.log', maxsize:1024, maxFiles:3 })
-  //]
-});
+log4js.configure({
+		appenders: [
+				{
+					type: 'file',
+					filename: logFile,
+					category: 'test',
+					maxLogSize: 4096000,                                                                                  
+					backups: 3,                                                                                                                
+				}                                                                                                                                           
+    ]                                                                                                                                                 
+});                                                                                                                                                         
+logger = log4js.getLogger('test');                                                                                                                        
 
-
-setInterval(function() {
-		logger.warn('test');
-}, 100);
+setInterval( () => {
+		logger.debug('test');
+}, 1000);
