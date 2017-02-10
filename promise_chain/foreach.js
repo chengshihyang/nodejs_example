@@ -1,7 +1,8 @@
 var Q = require('q');
 var request = require('request');
 
-function first_promise() {
+function first_promise(data) {
+		console.log('call second_promise: ', data);
 		var deferred = Q.defer();
 		request('https://www.google.com', function(error, response, body) {
 				if (!error && response.statusCode === 200) {
@@ -12,19 +13,22 @@ function first_promise() {
     return deferred.promise;
 };
 
-function second_promise() {
+function second_promise(data) {
+		console.log('call second_promise: ', data);
 		var deferred = Q.defer();
 		request('https://www.npmjs.com/package/request', function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 						console.log(response.headers['content-type']);
-						deferred.resolve('second_promise');
+						//deferred.resolve('second_promise');
+						deferred.reject('second_promise');
 				}
 		});
     return deferred.promise;
 };
 
 
-function third_promise() {
+function third_promise(data) {
+		console.log('call third_promise: ', data);
 		var deferred = Q.defer();
 		request('http://tw.yahoo.com', function(error, response, body) {
 				if (!error && response.statusCode === 200) {
@@ -35,33 +39,30 @@ function third_promise() {
     return deferred.promise;
 };
 
-function final_promise() {
+function final_promise(data) {
+		console.log('call final_promise: ', data);
 		var deferred = Q.defer();
 		request('https://www.google.com', function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 						console.log(response.headers['content-type']);
 						deferred.resolve('final_promise');
-						//deferred.reject('final_promise');
 				}
 		});
     return deferred.promise;
 };
 
+function output(data) {
+		console.log('output:', data);
+}
 
-first_promise()
-.then(function(success) { 
-		console.log(success);
-		return second_promise();
-})
-.then(function(success) { 
-		console.log(success);
-		return third_promise();
-})
-.then(function(success) {
-		console.log(success);
-		return final_promise();
-}).fail(function(err) {
-		console.log('err:\n' + err);
-}).done(function(done) {
-		console.log('done:\n' + done);
+function failure(data) {
+		console.log('failure:', data);
+}
+
+var funcs=[first_promise, second_promise, third_promise, final_promise, output];
+
+
+var result = Q('start');
+funcs.forEach(function (f) {
+		result = result.then(f);
 });
